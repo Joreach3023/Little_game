@@ -6,6 +6,7 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
 }
 
 #gameCanvas {
@@ -28,3 +29,17 @@ body {
     cursor: pointer;
 }
 
+#leaderboard {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#leaderboard h3 {
+    margin: 0;
+    color: #333;
+}
+
+#leaderboardList {
+    list-style-type: none;
+    padding: 0;
+}
