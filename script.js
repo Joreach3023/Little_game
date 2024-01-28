@@ -12,6 +12,12 @@ let score = 0;
 let game;
 let d;
 
+// Audio elements
+let eatSound = new Audio('audio/eat_sound.wav');
+let gameOverSound = new Audio('audio/game_over_sound.wav');
+let bgMusic = new Audio('audio/bgmusic.mp3');
+bgMusic.loop = true;
+
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
 controlArea.addEventListener('touchmove', handleTouchMove, false);
@@ -22,6 +28,7 @@ function startGame() {
     d = null;
     clearInterval(game);
     game = setInterval(draw, 100);
+    bgMusic.play(); // Play background music
 }
 
 function direction(event) {
@@ -73,6 +80,7 @@ function draw() {
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
+        eatSound.play();
         food = {
             x: Math.floor(Math.random() * 17 + 1) * box,
             y: Math.floor(Math.random() * 15 + 3) * box
@@ -87,7 +95,10 @@ function draw() {
     };
 
     if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+        if (gameOverCondition) {
+        gameOverSound.play();
         clearInterval(game);
+        bgMusic.pause();
         alert("Game Over! Score: " + score);
     }
 
