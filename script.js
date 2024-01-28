@@ -2,6 +2,7 @@ let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
 let box = 20;
 let snake = [];
+snake[0] = { x: 9 * box, y: 10 * box };
 let food = {
     x: Math.floor(Math.random() * 17 + 1) * box,
     y: Math.floor(Math.random() * 15 + 3) * box
@@ -13,22 +14,9 @@ let d;
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
 
-// Touch event variables
-let touchstartX = 0;
-let touchstartY = 0;
-let touchendX = 0;
-let touchendY = 0;
-
-// Add touch event listeners
-canvas.addEventListener('touchstart', e => {
-    touchstartX = e.changedTouches[0].screenX;
-    touchstartY = e.changedTouches[0].screenY;
-}, false);
-
-canvas.addEventListener('touchend', e => {
-    touchendX = e.changedTouches[0].screenX;
-    touchendY = e.changedTouches[0].screenY;
-    handleSwipeGesture();
+// Add touch event listener
+canvas.addEventListener('touchmove', e => {
+    handleTouchMove(e);
 }, false);
 
 function startGame() {
@@ -46,31 +34,36 @@ function direction(event) {
     else if (event.keyCode === 40 && d !== "UP") d = "DOWN";
 }
 
-function handleSwipeGesture() {
-    const deltaX = touchendX - touchstartX;
-    const deltaY = touchendY - touchstartY;
+function handleTouchMove(event) {
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+    const snakeHeadX = snake[0].x;
+    const snakeHeadY = snake[0].y;
+    const canvasRect = canvas.getBoundingClientRect();
 
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        // Horizontal swipe
-        if (deltaX > 0 && d !== "LEFT") d = "RIGHT";
-        else if (deltaX < 0 && d !== "RIGHT") d = "LEFT";
+    // Convert touch coordinates to canvas coordinates
+    const canvasTouchX = touchX - canvasRect.left;
+    const canvasTouchY = touchY - canvasRect.top;
+
+    // Determine direction based on touch position relative to snake head
+    if (Math.abs(canvasTouchX - snakeHeadX) > Math.abs(canvasTouchY - snakeHeadY)) {
+        if (canvasTouchX > snakeHeadX && d !== "LEFT") d = "RIGHT";
+        else if (canvasTouchX < snakeHeadX && d !== "RIGHT") d = "LEFT";
     } else {
-        // Vertical swipe
-        if (deltaY > 0 && d !== "UP") d = "DOWN";
-        else if (deltaY < 0 && d !== "DOWN") d = "UP";
+        if (canvasTouchY > snakeHeadY && d !== "UP") d = "DOWN";
+        else if (canvasTouchY < snakeHeadY && d !== "DOWN") d = "UP";
     }
+
+    event.preventDefault();
 }
 
 function draw() {
-    ctx.fillStyle = '#dcdcdc';
+    ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     for (let i = 0; i < snake.length; i++) {
-        ctx.fillStyle = (i === 0) ? "#4caf50" : "#8bc34a";
+        ctx.fillStyle = (i == 0) ? "green" : "blue";
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
-
-        ctx.strokeStyle = "#388e3c";
-        ctx.strokeRect(snake[i].x, snake[i].y, box, box);
     }
 
     ctx.fillStyle = "red";
@@ -94,9 +87,12 @@ function draw() {
         snake.pop();
     }
 
-    let newHead = { x: snakeX, y: snakeY };
+    let newHead = {
+        x: snakeX,
+        y: snakeY
+    };
 
-    if (snakeX < box || snakeY < box || snakeX > canvas.width - box || snakeY > canvas.height - box || collision(newHead, snake)) {
+    if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
         clearInterval(game);
         alert("Game Over! Score: " + score);
     }
@@ -112,3 +108,4 @@ function collision(head, array) {
     }
     return false;
 }
+
