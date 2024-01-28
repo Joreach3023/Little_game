@@ -14,12 +14,12 @@ body {
 }
 
 #controlArea {
-    width: 400px;
-    height: 400px;
+    width: 600px;
+    height: 150px;
     margin: 10px 0;
     border: 1px solid black;
     background-color: #ddd;
-    touch-action: none; /* This prevents the mobile browser from reacting to gestures, like pinch-zooming */
+    touch-action: none;
 }
 
 #startButton {
@@ -27,3 +27,4 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
+
