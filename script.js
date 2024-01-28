@@ -1,5 +1,6 @@
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
+let controlArea = document.getElementById("controlArea");
 let box = 20;
 let snake = [];
 snake[0] = { x: 9 * box, y: 10 * box };
@@ -13,11 +14,7 @@ let d;
 
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
-
-// Add touch event listener
-canvas.addEventListener('touchmove', e => {
-    handleTouchMove(e);
-}, false);
+controlArea.addEventListener('touchmove', handleTouchMove, false);
 
 function startGame() {
     snake = [{ x: 9 * box, y: 10 * box }];
@@ -37,21 +34,18 @@ function direction(event) {
 function handleTouchMove(event) {
     const touchX = event.touches[0].clientX;
     const touchY = event.touches[0].clientY;
+    const controlAreaRect = controlArea.getBoundingClientRect();
+    const controlAreaTouchX = touchX - controlAreaRect.left;
+    const controlAreaTouchY = touchY - controlAreaRect.top;
     const snakeHeadX = snake[0].x;
     const snakeHeadY = snake[0].y;
-    const canvasRect = canvas.getBoundingClientRect();
-
-    // Convert touch coordinates to canvas coordinates
-    const canvasTouchX = touchX - canvasRect.left;
-    const canvasTouchY = touchY - canvasRect.top;
-
-    // Determine direction based on touch position relative to snake head
-    if (Math.abs(canvasTouchX - snakeHeadX) > Math.abs(canvasTouchY - snakeHeadY)) {
-        if (canvasTouchX > snakeHeadX && d !== "LEFT") d = "RIGHT";
-        else if (canvasTouchX < snakeHeadX && d !== "RIGHT") d = "LEFT";
+    
+    if (Math.abs(controlAreaTouchX - snakeHeadX) > Math.abs(controlAreaTouchY - snakeHeadY)) {
+        if (controlAreaTouchX > snakeHeadX && d !== "LEFT") d = "RIGHT";
+        else if (controlAreaTouchX < snakeHeadX && d !== "RIGHT") d = "LEFT";
     } else {
-        if (canvasTouchY > snakeHeadY && d !== "UP") d = "DOWN";
-        else if (canvasTouchY < snakeHeadY && d !== "DOWN") d = "UP";
+        if (controlAreaTouchY > snakeHeadY && d !== "UP") d = "DOWN";
+        else if (controlAreaTouchY < snakeHeadY && d !== "DOWN") d = "UP";
     }
 
     event.preventDefault();
