@@ -80,7 +80,7 @@ function draw() {
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
-        eatSound.play();
+        eatSound.play(); // Play eating sound
         food = {
             x: Math.floor(Math.random() * 17 + 1) * box,
             y: Math.floor(Math.random() * 15 + 3) * box
@@ -95,11 +95,11 @@ function draw() {
     };
 
     if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-        if (gameOverCondition) {
-        gameOverSound.play();
+        gameOverSound.play(); // Play game over sound
         clearInterval(game);
-        bgMusic.pause();
+        bgMusic.pause(); // Stop background music
         alert("Game Over! Score: " + score);
+        return;
     }
 
     snake.unshift(newHead);
