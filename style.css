@@ -7,11 +7,40 @@ body {
     margin: 0;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+    position: relative;
+}
+
+#rainContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.raindrop {
+    position: absolute;
+    bottom: 100%;
+    width: 2px;
+    height: 10px;
+    background: lightblue;
+    opacity: 0.5;
+    animation-name: fall;
+    animation-timing-function: linear;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh);
+    }
 }
 
 #gameCanvas {
     border: 1px solid black;
     background-color: #fff;
+    z-index: 1;
 }
 
 #controlArea {
@@ -21,17 +50,20 @@ body {
     border: 1px solid black;
     background-color: #ddd;
     touch-action: none;
+    z-index: 1;
 }
 
 #startButton {
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    z-index: 1;
 }
 
 #leaderboard {
     margin-top: 20px;
     text-align: center;
+    z-index: 1;
 }
 
 #leaderboard h3 {
@@ -43,3 +75,4 @@ body {
     list-style-type: none;
     padding: 0;
 }
+
