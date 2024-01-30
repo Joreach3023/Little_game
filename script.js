@@ -1,6 +1,5 @@
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
-let controlArea = document.getElementById("controlArea");
 let box = 20;
 let snake = [];
 snake[0] = { x: 9 * box, y: 10 * box };
@@ -12,15 +11,25 @@ let score = 0;
 let game;
 let d;
 
-// Audio elements
-let eatSound = new Audio('audio/eat_sound.wav');
-let gameOverSound = new Audio('audio/game_over_sound.wav');
-let bgMusic = new Audio('audio/bgmusic.mp3');
-bgMusic.loop = true;
-
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
 controlArea.addEventListener('touchmove', handleTouchMove, false);
+
+function createRaindrop() {
+    const raindrop = document.createElement('div');
+    raindrop.classList.add('raindrop');
+    raindrop.style.left = Math.random() * window.innerWidth + 'px';
+    raindrop.style.animationDuration = Math.random() * 2 + 1 + 's';
+    raindrop.style.opacity = Math.random() + 0.2;
+
+    document.getElementById('rainContainer').appendChild(raindrop);
+
+    raindrop.addEventListener('animationend', function() {
+        raindrop.remove();
+    });
+}
+
+setInterval(createRaindrop, 100);
 
 function startGame() {
     snake = [{ x: 9 * box, y: 10 * box }];
@@ -28,7 +37,6 @@ function startGame() {
     d = null;
     clearInterval(game);
     game = setInterval(draw, 100);
-    bgMusic.play(); // Play background music
 }
 
 function direction(event) {
@@ -39,9 +47,26 @@ function direction(event) {
 }
 
 function handleTouchMove(event) {
-    // Touch move handling logic
-    // ...
+    const touchX = event.touches[0].clientX;
+    const touchY = event.touches[0].clientY;
+    const controlAreaRect = controlArea.getBoundingClientRect();
+    const controlAreaTouchX = touchX - controlAreaRect.left;
+    const controlAreaTouchY = touchY - controlAreaRect.top;
+    const snakeHeadX = snake[0].x;
+    const snakeHeadY = snake[0].y;
+    
+    if (Math.abs(controlAreaTouchX - snakeHeadX) > Math.abs(controlAreaTouchY - snakeHeadY)) {
+        if (controlAreaTouchX > snakeHeadX && d !== "LEFT") d = "RIGHT";
+        else if (controlAreaTouchX < snakeHeadX && d !== "RIGHT") d = "LEFT";
+    } else {
+        if (controlAreaTouchY > snakeHeadY && d !== "UP") d = "DOWN";
+        else if (controlAreaTouchY < snakeHeadY && d !== "DOWN") d = "UP";
+    }
+
+    event.preventDefault();
 }
+
+// ... continuation from the previous code ...
 
 function draw() {
     ctx.fillStyle = 'white';
@@ -65,7 +90,7 @@ function draw() {
 
     if (snakeX === food.x && snakeY === food.y) {
         score++;
-        eatSound.play(); // Play eating sound
+        eatSound.play();
         food = {
             x: Math.floor(Math.random() * 17 + 1) * box,
             y: Math.floor(Math.random() * 15 + 3) * box
@@ -74,17 +99,14 @@ function draw() {
         snake.pop();
     }
 
-    let newHead = {
-        x: snakeX,
-        y: snakeY
-    };
+    let newHead = { x: snakeX, y: snakeY };
 
     if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-        gameOverSound.play(); // Play game over sound
+        gameOverSound.play();
         clearInterval(game);
-        bgMusic.pause(); // Stop background music
+        bgMusic.pause();
         alert("Game Over! Score: " + score);
-        submitScore("PlayerName", score); // Submit score to leaderboard
+        submitScore("PlayerName", score);
         return;
     }
 
@@ -92,13 +114,16 @@ function draw() {
 }
 
 function collision(head, array) {
-    // Collision detection logic
-    // ...
+    for (let i = 0; i < array.length; i++) {
+        if (head.x === array[i].x && head.y === array[i].y) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Leaderboard Functions
 function submitScore(name, score) {
-    // Submit score to Google Sheets via Apps Script Web App
     fetch('https://script.google.com/macros/s/AKfycbxmVTIwsKdgcJXjWoc5JIAJrJK9dqLFhAUCzyz1M7FNa7WejsbAHp8zGJt3zI4Qerja7Q/exec', {
         method: 'POST',
         mode: 'no-cors',
@@ -113,12 +138,21 @@ function submitScore(name, score) {
 }
 
 function getLeaderboard() {
-    // Retrieve leaderboard data from Google Sheets
     fetch('https://script.google.com/macros/s/AKfycbxmVTIwsKdgcJXjWoc5JIAJrJK9dqLFhAUCzyz1M7FNa7WejsbAHp8zGJt3zI4Qerja7Q/exec')
         .then(response => response.json())
         .then(data => {
-            // Process and display the leaderboard data
-            console.log(data);
+            updateLeaderboard(data);
         })
         .catch(error => console.error('Error:', error));
 }
+
+function updateLeaderboard(data) {
+    const leaderboardList = document.getElementById('leaderboardList');
+    leaderboardList.innerHTML = '';
+    data.forEach(entry => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${entry[0]}: ${entry[1]}`;
+        leaderboardList.appendChild(listItem);
+    });
+}
+
