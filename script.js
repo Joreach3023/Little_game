@@ -80,6 +80,7 @@ function draw() {
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, box, box);
 
+    // Move the snake head
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
@@ -88,6 +89,7 @@ function draw() {
     if (d === "RIGHT") snakeX += box;
     if (d === "DOWN") snakeY += box;
 
+    // Check collision with food
     if (snakeX === food.x && snakeY === food.y) {
         score++;
         eatSound.play();
@@ -99,17 +101,14 @@ function draw() {
         snake.pop();
     }
 
-    let newHead = { x: snakeX, y: snakeY };
-
-    if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-        gameOverSound.play();
-        clearInterval(game);
-        bgMusic.pause();
-        alert("Game Over! Score: " + score);
-        submitScore("PlayerName", score);
+    // Check for collisions with the wall or the snake itself
+    if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision({ x: snakeX, y: snakeY }, snake)) {
+        gameOver();
         return;
     }
 
+    // Add new head position
+    let newHead = { x: snakeX, y: snakeY };
     snake.unshift(newHead);
 }
 
@@ -120,6 +119,24 @@ function collision(head, array) {
         }
     }
     return false;
+}
+
+function gameOver() {
+    gameOverSound.play();
+    clearInterval(game);
+    bgMusic.pause();
+    document.getElementById('nameEntry').style.display = 'block'; // Show the name entry form
+}
+
+function submitPlayerScore() {
+    const playerName = document.getElementById('playerName').value;
+    if (playerName) {
+        submitScore(playerName, score);
+        document.getElementById('nameEntry').style.display = 'none'; // Hide the form after submitting
+        getLeaderboard(); // Optional: Refresh the leaderboard
+    } else {
+        alert("Please enter your name.");
+    }
 }
 
 // Leaderboard Functions
