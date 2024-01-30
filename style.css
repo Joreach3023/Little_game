@@ -60,6 +60,11 @@ body {
     z-index: 1;
 }
 
+#nameEntry {
+    margin-top: 20px;
+    text-align: center;
+}
+
 #leaderboard {
     margin-top: 20px;
     text-align: center;
