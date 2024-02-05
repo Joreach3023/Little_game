@@ -7,22 +7,13 @@
 <body>
     <div id="rainContainer"></div>
     <div id="gameContainer">
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div id="controlArea" style="width: 800px; height: 600px;"></div>
+        <canvas id="gameCanvas" width="600" height="600"></canvas>
+        <div id="controlArea" style="width: 800px; height: 600px; display: flex; justify-content: center; align-items: center;">
+            <p>Control Area (Swipe)</p>
+        </div>
         <button id="startButton">Start Game</button>
     </div>
-    <div id="nameEntry" style="display: none;">
-    <label for="playerName">Enter your name:</label>
-    <input type="text" id="playerName">
-    <button onclick="submitPlayerScore()">Submit</button>
-    <div id="controlArea">
-    <p>Control Area (Swipe)</p>
-</div>
 
-    
-
-
-    
     <!-- Audio elements -->
     <audio id="eatSound" src="audio/eat_sound.wav" preload="auto"></audio>
     <audio id="gameOverSound" src="audio/game_over_sound.wav" preload="auto"></audio>
@@ -34,7 +25,13 @@
         <ul id="leaderboardList"></ul>
     </div>
 
+    <!-- Name entry for leaderboard -->
+    <div id="nameEntry" style="display: none;">
+        <label for="playerName">Enter your name:</label>
+        <input type="text" id="playerName">
+        <button onclick="submitPlayerScore()">Submit</button>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
-
