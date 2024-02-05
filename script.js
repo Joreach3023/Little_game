@@ -12,7 +12,7 @@ let game;
 let d;
 let touchStartX = 0;
 let touchStartY = 0;
-let threshold = 60; // Pixels. Adjust based on testing for best feel.
+let threshold = 100; // Pixels. Adjust based on testing for best feel.
 
 
 document.getElementById("startButton").addEventListener("click", startGame);
