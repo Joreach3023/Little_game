@@ -174,57 +174,66 @@ function collision(head, array) {
     return false;
 }
 
+// Assuming you already have variables and functions defined for the game's logic
+
 function gameOver() {
     gameOverSound.play();
-    clearInterval(game);
+    clearInterval(game); // Assuming 'game' is your interval or animation frame loop
     bgMusic.pause();
-    document.getElementById('nameEntry').style.display = 'block'; // Show the name entry form
+    document.getElementById('nameEntry').style.display = 'block'; // Show name entry form
 }
 
-
-// Leaderboard Functions
-// Function to submit the player's score
 function submitPlayerScore() {
-    const playerName = document.getElementById('playerName').value;
-    const score = /* Your logic to get the player's score */;
-
-    if (!playerName.trim()) {
+    const playerName = document.getElementById('playerName').value.trim();
+    if (playerName) {
+        const data = { name: playerName, score: score }; // Assuming 'score' is your score variable
+        fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', {
+            method: 'POST',
+            mode: 'no-cors', // This might prevent you from reading the response
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            document.getElementById('nameEntry').style.display = 'none'; // Hide the form
+            getLeaderboard(); // Refresh the leaderboard
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
         alert("Please enter your name.");
-        return;
     }
-
-    const data = { name: playerName, score: score };
-
-    fetch('https://script.google.com/macros/s/AKfycby3WFJqgxYtjyA35_iKRslLbzg9nHMIlCyWT3RYs-hlYCd7mYPJh1H52qfvEF2cxTbAeg/exec', {
-        method: 'POST',
-        mode: 'no-cors', // Note: 'no-cors' mode doesn't allow reading the response from the server
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-    .then(() => {
-        document.getElementById('nameEntry').style.display = 'none'; // Hide the entry form
-        getLeaderboard(); // Refresh the leaderboard
-    })
-    .catch(error => console.error('Error:', error));
 }
 
-// Function to fetch and display the leaderboard
 function getLeaderboard() {
-    fetch('https://script.google.com/macros/s/AKfycby3WFJqgxYtjyA35_iKRslLbzg9nHMIlCyWT3RYs-hlYCd7mYPJh1H52qfvEF2cxTbAeg/exec', { mode: 'no-cors' })
+    fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec', { mode: 'cors' }) // Ensure CORS is enabled on your Google Apps Script
     .then(response => response.json())
     .then(data => {
         const leaderboardList = document.getElementById('leaderboardList');
-        leaderboardList.innerHTML = ''; // Clear existing leaderboard entries
-
-        data.forEach(entry => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${entry[0]}: ${entry[1]}`; // Assuming the format is [name, score]
-            leaderboardList.appendChild(listItem);
+        leaderboardList.innerHTML = ''; // Clear existing entries
+        data.forEach((entry, index) => {
+            if (index < 5) { // Limit to top 5 entries
+                const listItem = document.createElement('li');
+                listItem.textContent = `${entry[0]}: ${entry[1]}`;
+                leaderboardList.appendChild(listItem);
+            }
         });
     })
     .catch(error => console.error('Error fetching leaderboard:', error));
 }
+
+// Initialize game elements
+document.getElementById('startButton').addEventListener('click', startGame);
+
+function startGame() {
+    // Reset game state, hide name entry form, initialize or reset any necessary variables
+    document.getElementById('nameEntry').style.display = 'none';
+    // Start or restart your game loop
+    game = setInterval(draw, 100); // Or use requestAnimationFrame(draw);
+    bgMusic.play();
+}
+
+// Call getLeaderboard at game start to display the current leaderboard
+document.addEventListener('DOMContentLoaded', getLeaderboard);
 
 
