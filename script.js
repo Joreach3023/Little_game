@@ -181,16 +181,6 @@ function gameOver() {
     document.getElementById('nameEntry').style.display = 'block'; // Show the name entry form
 }
 
-function submitPlayerScore() {
-    const playerName = document.getElementById('playerName').value;
-    if (playerName) {
-        submitScore(playerName, score);
-        document.getElementById('nameEntry').style.display = 'none'; // Hide the form after submitting
-        getLeaderboard(); // Optional: Refresh the leaderboard
-    } else {
-        alert("Please enter your name.");
-    }
-}
 
 // Leaderboard Functions
 // Function to submit the player's score
