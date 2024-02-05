@@ -77,19 +77,95 @@ function handleTouchMove(e) {
 
 // ... continuation from the previous code ...
 
-function draw() {
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+let lastRenderTime = 0;
+let pulseSize = 0;
+let growing = true;
 
+function draw(currentTime) {
+    // Calculate time since last render
+    const timeSinceLastRender = (currentTime - lastRenderTime) / 1000;
+    lastRenderTime = currentTime;
+
+    // Update pulse size for snake head
+    if (growing) {
+        pulseSize += timeSinceLastRender * 5; // Speed of growth
+    } else {
+        pulseSize -= timeSinceLastRender * 5; // Speed of shrink
+    }
+    if (pulseSize > 2 || pulseSize < -2) growing = !growing; // Reverse growth/shrink direction
+
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw snake
     for (let i = 0; i < snake.length; i++) {
-        ctx.fillStyle = (i == 0) ? "green" : "blue";
-        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+        ctx.fillStyle = (i === 0) ? "green" : "blue";
+        let extraSize = (i === 0) ? pulseSize : 0; // Apply pulsing effect only to head
+        ctx.fillRect(snake[i].x, snake[i].y, box + extraSize, box + extraSize);
     }
 
+    // Draw food
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, box, box);
 
-    // Move the snake head
+    // Game logic for moving snake, eating food, etc.
+    // ...
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+
+    // Update snake position based on direction
+    if (d === "LEFT") snakeX -= box;
+    if (d === "UP") snakeY -= box;
+    if (d === "RIGHT") snakeX += box;
+    if (d === "DOWN") snakeY += box;
+
+    // Check collision with the canvas walls
+    if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height) {
+        gameOver();
+        return;
+    }
+
+    // Check collision with the snake itself
+    for (let i = 4; i < snake.length; i++) {
+        if (snakeX === snake[i].x && snakeY === snake[i].y) {
+            gameOver();
+            return;
+        }
+    }
+
+    // Move the snake
+    let newHead = { x: snakeX, y: snakeY };
+    snake.unshift(newHead);
+
+    // Check if the snake eats food
+    if (snakeX === food.x && snakeY === food.y) {
+        score++;
+        eatSound.play();
+        // Generate new food position
+        food = {
+            x: Math.floor(Math.random() * (canvas.width / box)) * box,
+            y: Math.floor(Math.random() * (canvas.height / box)) * box
+        };
+    } else {
+        // Remove the tail if the snake didn't eat food
+        snake.pop();
+    }
+
+    // Check for game over condition
+    if (gameOverCondition) {
+        gameOver();
+        return;
+    }
+
+    // Move snake head
+    updateSnakePosition();
+
+    // Schedule next draw call
+    requestAnimationFrame(draw);
+}
+
+function updateSnakePosition() {
+    // Logic to update snake's position based on direction 'd'
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
@@ -98,28 +174,30 @@ function draw() {
     if (d === "RIGHT") snakeX += box;
     if (d === "DOWN") snakeY += box;
 
-    // Check collision with food
+    // Check for collision with food
     if (snakeX === food.x && snakeY === food.y) {
         score++;
         eatSound.play();
-        food = {
-            x: Math.floor(Math.random() * 17 + 1) * box,
-            y: Math.floor(Math.random() * 15 + 3) * box
-        };
+        generateNewFoodPosition();
     } else {
-        snake.pop();
+        snake.pop(); // Remove last part of the snake, since we didn't eat food
     }
 
-    // Check for collisions with the wall or the snake itself
-    if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision({ x: snakeX, y: snakeY }, snake)) {
-        gameOver();
-        return;
-    }
-
-    // Add new head position
+    // Add new head based on direction
     let newHead = { x: snakeX, y: snakeY };
     snake.unshift(newHead);
 }
+
+function generateNewFoodPosition() {
+    // Logic to place new food on the canvas at a random position
+    food = {
+        x: Math.floor(Math.random() * (canvas.width / box)) * box,
+        y: Math.floor(Math.random() * (canvas.height / box)) * box
+    };
+}
+
+// Initialize the first draw call
+requestAnimationFrame(draw);
 
 function collision(head, array) {
     for (let i = 0; i < array.length; i++) {
