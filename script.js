@@ -11,7 +11,6 @@ let score = 0;
 let d;
 let game;
 let raindrops = [];
-let raindropGrowth = 0.1; // Initial growth rate of raindrops
 
 document.getElementById("startButton").addEventListener("click", startGame);
 
@@ -29,33 +28,32 @@ function startGame() {
     bgMusic.play();
 }
 
+let raindrops = [];
+
 function addRaindrop() {
-    // Add a new raindrop at a random position at the top
-    raindrops.push({ x: Math.random() * canvas.width, y: 0, size: 1 });
+    // Adds a new raindrop at a random position at the top
+    raindrops.push({ x: Math.random() * canvas.width, y: 0 });
+}
+
+for (let i = 0; i < 20; i++) { // Start with 20 raindrops
+    addRaindrop();
 }
 
 function updateAndDrawRain() {
-    for (let i = 0; i < raindrops.length; i++) {
-        let drop = raindrops[i];
-        drop.y += 3; // Speed of raindrop fall
-        drop.size += raindropGrowth; // Raindrop grows as it falls
+    ctx.fillStyle = 'blue';
+    raindrops.forEach((drop, index) => {
+        drop.y += 4; // Speed of raindrop fall
         ctx.beginPath();
-        ctx.arc(drop.x, drop.y, drop.size, 0, 2 * Math.PI);
-        ctx.fillStyle = 'blue';
+        ctx.arc(drop.x, drop.y, 2, 0, Math.PI * 2); // Draw raindrop as small circle
         ctx.fill();
 
         // Remove raindrop if it goes beyond the canvas
         if (drop.y > canvas.height) {
-            raindrops.splice(i, 1);
-            i--;
+            raindrops.splice(index, 1);
         }
-    }
+    });
 }
 
-// Initially populate the canvas with some raindrops
-for (let i = 0; i < 20; i++) {
-    addRaindrop();
-}
 
 function direction(event) {
     let key = event.keyCode;
@@ -95,8 +93,19 @@ function draw() {
             x: Math.floor(Math.random() * 17 + 1) * box,
             y: Math.floor(Math.random() * 15 + 3) * box
         };
-        raindropGrowth += 0.05; // Increase growth rate with each food eaten
-    addRaindrop(); // Optionally, add more raindrops as the game progresses
+        // Inside your game logic where the snake eats food
+if (snakeX === food.x && snakeY === food.y) {
+    score++;
+    eatSound.play();
+    food = {
+        x: Math.floor(Math.random() * 17 + 1) * box,
+        y: Math.floor(Math.random() * 15 + 3) * box
+    };
+    
+    // Add multiple new raindrops each time the snake eats food
+    for (let i = 0; i < score; i++) {
+        addRaindrop();
+    }
     } else {
         snake.pop();
     }
