@@ -12,6 +12,8 @@ let game;
 let d;
 let touchStartX = 0;
 let touchStartY = 0;
+let threshold = 30; // Pixels. Adjust based on testing for best feel.
+
 
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
@@ -58,16 +60,19 @@ function handleTouchMove(e) {
     const dy = touchEndY - touchStartY;
 
     if (Math.abs(dx) > Math.abs(dy)) { // Horizontal movement
-        if (dx > 0 && d !== "LEFT") d = "RIGHT";
-        else if (dx < 0 && d !== "RIGHT") d = "LEFT";
+        if (dx > threshold && d !== "LEFT") d = "RIGHT";
+        else if (dx < -threshold && d !== "RIGHT") d = "LEFT";
     } else { // Vertical movement
-        if (dy > 0 && d !== "UP") d = "DOWN";
-        else if (dy < 0 && d !== "DOWN") d = "UP";
+        if (dy > threshold && d !== "UP") d = "DOWN";
+        else if (dy < -threshold && d !== "DOWN") d = "UP";
     }
 
-    // Update the start position for the next move
-    touchStartX = touchEndX;
-    touchStartY = touchEndY;
+    // Optionally, update the start position for the next move
+    // Only update if a swipe was detected to prevent drift
+    if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+        touchStartX = touchEndX;
+        touchStartY = touchEndY;
+    }
 }
 
 // ... continuation from the previous code ...
