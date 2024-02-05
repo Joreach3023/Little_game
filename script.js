@@ -205,7 +205,7 @@ function submitPlayerScore() {
 
     const data = { name: playerName, score: score };
 
-    fetch('YOUR_WEB_APP_URL', {
+    fetch('https://script.google.com/macros/s/AKfycby3WFJqgxYtjyA35_iKRslLbzg9nHMIlCyWT3RYs-hlYCd7mYPJh1H52qfvEF2cxTbAeg/exec', {
         method: 'POST',
         mode: 'no-cors', // Note: 'no-cors' mode doesn't allow reading the response from the server
         headers: {
