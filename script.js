@@ -10,10 +10,13 @@ let food = {
 let score = 0;
 let game;
 let d;
+let touchStartX = 0;
+let touchStartY = 0;
 
 document.getElementById("startButton").addEventListener("click", startGame);
 document.addEventListener("keydown", direction);
 controlArea.addEventListener('touchmove', handleTouchMove, false);
+canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
 
 function createRaindrop() {
     const raindrop = document.createElement('div');
@@ -46,24 +49,25 @@ function direction(event) {
     else if (event.keyCode === 40 && d !== "UP") d = "DOWN";
 }
 
-function handleTouchMove(event) {
-    const touchX = event.touches[0].clientX;
-    const touchY = event.touches[0].clientY;
-    const controlAreaRect = controlArea.getBoundingClientRect();
-    const controlAreaTouchX = touchX - controlAreaRect.left;
-    const controlAreaTouchY = touchY - controlAreaRect.top;
-    const snakeHeadX = snake[0].x;
-    const snakeHeadY = snake[0].y;
-    
-    if (Math.abs(controlAreaTouchX - snakeHeadX) > Math.abs(controlAreaTouchY - snakeHeadY)) {
-        if (controlAreaTouchX > snakeHeadX && d !== "LEFT") d = "RIGHT";
-        else if (controlAreaTouchX < snakeHeadX && d !== "RIGHT") d = "LEFT";
-    } else {
-        if (controlAreaTouchY > snakeHeadY && d !== "UP") d = "DOWN";
-        else if (controlAreaTouchY < snakeHeadY && d !== "DOWN") d = "UP";
+function handleTouchMove(e) {
+    e.preventDefault(); // Prevent scrolling when touching the canvas
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+
+    const dx = touchEndX - touchStartX;
+    const dy = touchEndY - touchStartY;
+
+    if (Math.abs(dx) > Math.abs(dy)) { // Horizontal movement
+        if (dx > 0 && d !== "LEFT") d = "RIGHT";
+        else if (dx < 0 && d !== "RIGHT") d = "LEFT";
+    } else { // Vertical movement
+        if (dy > 0 && d !== "UP") d = "DOWN";
+        else if (dy < 0 && d !== "DOWN") d = "UP";
     }
 
-    event.preventDefault();
+    // Update the start position for the next move
+    touchStartX = touchEndX;
+    touchStartY = touchEndY;
 }
 
 // ... continuation from the previous code ...
