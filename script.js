@@ -227,6 +227,4 @@ function getLeaderboard() {
     .catch(error => console.error('Error fetching leaderboard:', error));
 }
 
-// Initial fetch to display the leaderboard when the game loads
-document.addEventListener('DOMContentLoaded', getLeaderboard);
 
