@@ -193,36 +193,50 @@ function submitPlayerScore() {
 }
 
 // Leaderboard Functions
-function submitScore(name, score) {
-    fetch('https://script.google.com/macros/s/AKfycbxmVTIwsKdgcJXjWoc5JIAJrJK9dqLFhAUCzyz1M7FNa7WejsbAHp8zGJt3zI4Qerja7Q/exec', {
+// Function to submit the player's score
+function submitPlayerScore() {
+    const playerName = document.getElementById('playerName').value;
+    const score = /* Your logic to get the player's score */;
+
+    if (!playerName.trim()) {
+        alert("Please enter your name.");
+        return;
+    }
+
+    const data = { name: playerName, score: score };
+
+    fetch('YOUR_WEB_APP_URL', {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'no-cors', // Note: 'no-cors' mode doesn't allow reading the response from the server
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: name, score: score })
+        body: JSON.stringify(data)
     })
-    .then(response => response.text())
-    .then(result => console.log(result))
+    .then(() => {
+        document.getElementById('nameEntry').style.display = 'none'; // Hide the entry form
+        getLeaderboard(); // Refresh the leaderboard
+    })
     .catch(error => console.error('Error:', error));
 }
 
+// Function to fetch and display the leaderboard
 function getLeaderboard() {
-    fetch('https://script.google.com/macros/s/AKfycbxmVTIwsKdgcJXjWoc5JIAJrJK9dqLFhAUCzyz1M7FNa7WejsbAHp8zGJt3zI4Qerja7Q/exec')
-        .then(response => response.json())
-        .then(data => {
-            updateLeaderboard(data);
-        })
-        .catch(error => console.error('Error:', error));
+    fetch('YOUR_WEB_APP_URL', { mode: 'no-cors' })
+    .then(response => response.json())
+    .then(data => {
+        const leaderboardList = document.getElementById('leaderboardList');
+        leaderboardList.innerHTML = ''; // Clear existing leaderboard entries
+
+        data.forEach(entry => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `${entry[0]}: ${entry[1]}`; // Assuming the format is [name, score]
+            leaderboardList.appendChild(listItem);
+        });
+    })
+    .catch(error => console.error('Error fetching leaderboard:', error));
 }
 
-function updateLeaderboard(data) {
-    const leaderboardList = document.getElementById('leaderboardList');
-    leaderboardList.innerHTML = '';
-    data.forEach(entry => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${entry[0]}: ${entry[1]}`;
-        leaderboardList.appendChild(listItem);
-    });
-}
+// Initial fetch to display the leaderboard when the game loads
+document.addEventListener('DOMContentLoaded', getLeaderboard);
 
