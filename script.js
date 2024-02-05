@@ -1,82 +1,32 @@
-let canvas = document.getElementById("gameCanvas");
-let ctx = canvas.getContext("2d");
-let box = 20;
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const box = 20;
 let snake = [];
-snake[0] = { x: 9 * box, y: 10 * box };
-let food = {
-    x: Math.floor(Math.random() * 17 + 1) * box,
-    y: Math.floor(Math.random() * 15 + 3) * box
-};
 let score = 0;
 let d;
 let game;
 let raindrops = [];
+let food = {
+    x: Math.floor(Math.random() * (canvas.width / box)) * box,
+    y: Math.floor(Math.random() * (canvas.height / box)) * box
+};
 
+document.addEventListener("keydown", direction);
 document.getElementById("startButton").addEventListener("click", startGame);
 
 function startGame() {
     snake = [{ x: 9 * box, y: 10 * box }];
     score = 0;
-    d = 'RIGHT'; // Default direction
+    d = 'RIGHT';
     food = {
-        x: Math.floor(Math.random() * 17 + 1) * box,
-        y: Math.floor(Math.random() * 15 + 3) * box
+        x: Math.floor(Math.random() * (canvas.width / box)) * box,
+        y: Math.floor(Math.random() * (canvas.height / box)) * box
     };
+    raindrops = [];
     clearInterval(game);
     game = setInterval(draw, 100);
-    document.getElementById('nameEntry').style.display = 'none'; // Hide name entry on game start
-    bgMusic.play();
+    document.getElementById('nameEntry').style.display = 'none';
 }
-
-let raindrops = [];
-
-function addRaindrop() {
-    // Adds a new raindrop at a random position at the top
-    raindrops.push({ x: Math.random() * canvas.width, y: 0 });
-}
-
-for (let i = 0; i < 20; i++) { // Start with 20 raindrops
-    addRaindrop();
-}
-
-function updateAndDrawRain() {
-    ctx.fillStyle = 'blue';
-    raindrops.forEach((drop, index) => {
-        drop.y += 4; // Speed of raindrop fall
-        ctx.beginPath();
-        ctx.arc(drop.x, drop.y, 2, 0, Math.PI * 2); // Draw raindrop as small circle
-        ctx.fill();
-
-        // Remove raindrop if it goes beyond the canvas
-        if (drop.y > canvas.height) {
-            raindrops.splice(index, 1);
-        }
-    });
-}
-
-let fireworks = [];
-
-function triggerFireworks() {
-    fireworks.push({ x: canvas.width / 2, y: canvas.height / 2, size: 1, maxSize: 50 });
-}
-
-function updateAndDrawFireworks() {
-    for (let i = 0; i < fireworks.length; i++) {
-        let fw = fireworks[i];
-        fw.size += 2; // Speed of fireworks expansion
-        ctx.beginPath();
-        ctx.arc(fw.x, fw.y, fw.size, 0, 2 * Math.PI);
-        ctx.fillStyle = 'red';
-        ctx.fill();
-
-        // Remove fireworks if it reaches its max size
-        if (fw.size > fw.maxSize) {
-            fireworks.splice(i, 1);
-            i--;
-        }
-    }
-}
-
 
 function direction(event) {
     let key = event.keyCode;
@@ -86,12 +36,8 @@ function direction(event) {
     else if (key === 40 && d !== "UP") d = "DOWN";
 }
 
-document.addEventListener("keydown", direction);
-
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateAndDrawRain();
-    updateAndDrawFireworks(); // Update and draw fireworks if active
     for (let i = 0; i < snake.length; i++) {
         ctx.fillStyle = (i === 0) ? "green" : "blue";
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
@@ -100,7 +46,6 @@ function draw() {
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, box, box);
 
-    // Snake's next position
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
@@ -109,42 +54,60 @@ function draw() {
     if (d === "RIGHT") snakeX += box;
     if (d === "DOWN") snakeY += box;
 
-    // Eating food logic
-
-if (snakeX === food.x && snakeY === food.y) {
-    score++;
-    eatSound.play();
-    food = {
-        x: Math.floor(Math.random() * 17 + 1) * box,
-        y: Math.floor(Math.random() * 15 + 3) * box
-    };
-    
-    // Add multiple new raindrops each time the snake eats food
-    for (let i = 0; i < score; i++) {
-        addRaindrop();
-    }
-    // Modify the score increase logic to trigger fireworks at a score of 5
-if (score === 5) {
-    triggerFireworks();
-}
+    if (snakeX === food.x && snakeY === food.y) {
+        score++;
+        food = {
+            x: Math.floor(Math.random() * (canvas.width / box)) * box,
+            y: Math.floor(Math.random() * (canvas.height / box)) * box
+        };
+        for (let i = 0; i < 3; i++) addRaindrop(); // Increase raindrop quantity with each food eaten
     } else {
         snake.pop();
     }
-    // New head position
+
     let newHead = { x: snakeX, y: snakeY };
 
-    // Collision detection
-    if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
-        gameOver();
+    if (collision(newHead, snake)) {
+        clearInterval(game);
+        alert("Game Over");
         return;
     }
 
     snake.unshift(newHead);
-    // Display score
+
+    updateAndDrawRain();
     ctx.fillStyle = "white";
-    ctx.font = "45px Arial";
-    ctx.fillText(score, 2 * box, 1.6 * box);
+    ctx.font = "20px Arial";
+    ctx.fillText("Score: " + score, box, 1.6 * box);
 }
+
+function collision(head, array) {
+    for (let i = 1; i < array.length; i++) {
+        if (head.x === array[i].x && head.y === array[i].y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function addRaindrop() {
+    raindrops.push({ x: Math.random() * canvas.width, y: 0 });
+}
+
+function updateAndDrawRain() {
+    raindrops.forEach((drop, index) => {
+        drop.y += 4;
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+
+        if (drop.y > canvas.height) {
+            raindrops.splice(index, 1);
+        }
+    });
+}
+
 
 function collision(head, array) {
     for (let i = 1; i < array.length; i++) {
