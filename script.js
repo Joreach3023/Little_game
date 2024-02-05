@@ -54,6 +54,29 @@ function updateAndDrawRain() {
     });
 }
 
+let fireworks = [];
+
+function triggerFireworks() {
+    fireworks.push({ x: canvas.width / 2, y: canvas.height / 2, size: 1, maxSize: 50 });
+}
+
+function updateAndDrawFireworks() {
+    for (let i = 0; i < fireworks.length; i++) {
+        let fw = fireworks[i];
+        fw.size += 2; // Speed of fireworks expansion
+        ctx.beginPath();
+        ctx.arc(fw.x, fw.y, fw.size, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+
+        // Remove fireworks if it reaches its max size
+        if (fw.size > fw.maxSize) {
+            fireworks.splice(i, 1);
+            i--;
+        }
+    }
+}
+
 
 function direction(event) {
     let key = event.keyCode;
@@ -86,14 +109,7 @@ function draw() {
     if (d === "DOWN") snakeY += box;
 
     // Eating food logic
-    if (snakeX === food.x && snakeY === food.y) {
-        score++;
-        eatSound.play();
-        food = {
-            x: Math.floor(Math.random() * 17 + 1) * box,
-            y: Math.floor(Math.random() * 15 + 3) * box
-        };
-        // Inside your game logic where the snake eats food
+
 if (snakeX === food.x && snakeY === food.y) {
     score++;
     eatSound.play();
@@ -106,6 +122,10 @@ if (snakeX === food.x && snakeY === food.y) {
     for (let i = 0; i < score; i++) {
         addRaindrop();
     }
+    // Modify the score increase logic to trigger fireworks at a score of 5
+if (score === 5) {
+    triggerFireworks();
+}
     } else {
         snake.pop();
     }
