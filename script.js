@@ -91,6 +91,7 @@ document.addEventListener("keydown", direction);
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     updateAndDrawRain();
+    updateAndDrawFireworks(); // Update and draw fireworks if active
     for (let i = 0; i < snake.length; i++) {
         ctx.fillStyle = (i === 0) ? "green" : "blue";
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
