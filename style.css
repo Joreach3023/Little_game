@@ -1,67 +1,40 @@
-body {
+body, html {
+    height: 100%;
+    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background-color: #282c34;
+}
+
+#gameContainer {
     position: relative;
+    margin-bottom: 20px;
 }
 
-#rainContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: -1;
-}
-
-.raindrop {
-    position: absolute;
-    bottom: 100%;
-    width: 2px;
-    height: 10px;
-    background: lightblue;
-    opacity: 0.5;
-    animation-name: fall;
-    animation-timing-function: linear;
-}
-
-@keyframes fall {
-    to {
-        transform: translateY(100vh);
-    }
-}
-
-#gameCanvas {
-    border: 1px solid black;
-    background-color: #fff;
-    z-index: 1;
+canvas#gameCanvas {
+    border: 2px solid #fff;
+    background-color: #000;
 }
 
 #controlArea {
-    width: 800px;
-    height: 600px;
-    margin: 10px 0;
-    border: 1px solid black;
-    background-color: #ddd;
-    touch-action: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px; /* Larger text within the control area */
-    color: #333; /* Text color */
+    margin: 20px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
+    font-size: 16px;
+    text-align: center;
 }
 
-#startButton {
-    padding: 15px 30px;
+button {
+    padding: 10px 20px;
     font-size: 18px;
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -69,34 +42,50 @@ body {
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #0056b3;
 }
 
-
 #nameEntry {
+    display: none;
     margin-top: 20px;
     text-align: center;
 }
 
-#leaderboard {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    background-color: #f9f9f9;
+#nameEntry input[type="text"] {
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 16px;
     border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+
+#leaderboard {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #leaderboard h3 {
-    margin: 0;
+    margin: 0 0 10px 0;
     color: #333;
 }
 
 #leaderboardList {
     list-style-type: none;
     padding: 0;
+    margin: 0;
+}
+
+#leaderboardList li {
+    padding: 5px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#leaderboardList li:last-child {
+    border-bottom: none;
 }
 
 
