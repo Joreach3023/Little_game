@@ -10,6 +10,8 @@ let food = {
 let score = 0;
 let d;
 let game;
+let raindrops = [];
+let raindropGrowth = 0.1; // Initial growth rate of raindrops
 
 document.getElementById("startButton").addEventListener("click", startGame);
 
@@ -27,6 +29,34 @@ function startGame() {
     bgMusic.play();
 }
 
+function addRaindrop() {
+    // Add a new raindrop at a random position at the top
+    raindrops.push({ x: Math.random() * canvas.width, y: 0, size: 1 });
+}
+
+function updateAndDrawRain() {
+    for (let i = 0; i < raindrops.length; i++) {
+        let drop = raindrops[i];
+        drop.y += 3; // Speed of raindrop fall
+        drop.size += raindropGrowth; // Raindrop grows as it falls
+        ctx.beginPath();
+        ctx.arc(drop.x, drop.y, drop.size, 0, 2 * Math.PI);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+
+        // Remove raindrop if it goes beyond the canvas
+        if (drop.y > canvas.height) {
+            raindrops.splice(i, 1);
+            i--;
+        }
+    }
+}
+
+// Initially populate the canvas with some raindrops
+for (let i = 0; i < 20; i++) {
+    addRaindrop();
+}
+
 function direction(event) {
     let key = event.keyCode;
     if (key === 37 && d !== "RIGHT") d = "LEFT";
@@ -39,6 +69,7 @@ document.addEventListener("keydown", direction);
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    updateAndDrawRain();
     for (let i = 0; i < snake.length; i++) {
         ctx.fillStyle = (i === 0) ? "green" : "blue";
         ctx.fillRect(snake[i].x, snake[i].y, box, box);
@@ -64,6 +95,8 @@ function draw() {
             x: Math.floor(Math.random() * 17 + 1) * box,
             y: Math.floor(Math.random() * 15 + 3) * box
         };
+        raindropGrowth += 0.05; // Increase growth rate with each food eaten
+    addRaindrop(); // Optionally, add more raindrops as the game progresses
     } else {
         snake.pop();
     }
