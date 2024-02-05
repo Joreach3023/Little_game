@@ -222,7 +222,7 @@ function submitPlayerScore() {
 
 // Function to fetch and display the leaderboard
 function getLeaderboard() {
-    fetch('YOUR_WEB_APP_URL', { mode: 'no-cors' })
+    fetch('https://script.google.com/macros/s/AKfycby3WFJqgxYtjyA35_iKRslLbzg9nHMIlCyWT3RYs-hlYCd7mYPJh1H52qfvEF2cxTbAeg/exec', { mode: 'no-cors' })
     .then(response => response.json())
     .then(data => {
         const leaderboardList = document.getElementById('leaderboardList');
