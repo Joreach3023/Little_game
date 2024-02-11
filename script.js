@@ -219,13 +219,13 @@ function drawFireworks() {
 }
 
 // Submitting score to the leaderboard
+// Corrected submitScore function
 function submitScore(playerName, score) {
-    const playerName = document.getElementById('playerName').value.trim();
-    // Use the `score` variable directly instead of getting a value from an input
+    // No need to get playerName from the DOM, it's passed as an argument
     if (playerName) {
         fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec', {
             method: 'POST',
-            mode: 'no-cors', // Note: 'no-cors' may limit the type of responses you can read
+            mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -233,7 +233,8 @@ function submitScore(playerName, score) {
         })
         .then(() => {
             alert('Score submitted!');
-            document.getElementById('playerName').value = ''; // Clear the name field
+            // Optionally clear the input field if it exists elsewhere for re-use
+            // document.getElementById('playerName').value = '';
             fetchLeaderboard(); // Refresh the leaderboard after submitting
         })
         .catch(error => console.error('Error:', error));
@@ -241,6 +242,7 @@ function submitScore(playerName, score) {
         alert("Please enter your name.");
     }
 }
+
 
 
 function fetchLeaderboard() {
