@@ -258,17 +258,20 @@ function submitScore(playerName, score) {
 
 function fetchLeaderboard() {
     fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec')
-        .then(response => response.json())
-        .then(data => {
-            const leaderboardList = document.getElementById('leaderboardList');
-            leaderboardList.innerHTML = ''; // Clear current list
-            data.forEach(entry => {
-                const li = document.createElement('li');
-                li.textContent = `${entry.name}: ${entry.score}`;
-                leaderboardList.appendChild(li);
-            });
-        }).catch(error => console.error('Error fetching leaderboard:', error));
+    .then(response => response.json())
+    .then(data => {
+        const sortedData = data.sort((a, b) => b.score - a.score).slice(0, 5); // Sort by score descending, then take top 5
+        const leaderboardList = document.getElementById('leaderboardList');
+        leaderboardList.innerHTML = ''; // Clear current list
+        sortedData.forEach(entry => {
+            const li = document.createElement('li');
+            li.textContent = `${entry.name}: ${entry.score}`;
+            leaderboardList.appendChild(li);
+        });
+    })
+    .catch(error => console.error('Error fetching leaderboard:', error));
 }
+
 
 // Initial fetch for leaderboard
 document.addEventListener('DOMContentLoaded', fetchLeaderboard);
