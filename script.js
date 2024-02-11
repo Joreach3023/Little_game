@@ -9,10 +9,6 @@ let raindrops = [];
 let fireworks = [];
 let game;
 
-document.getElementById('retryButton').addEventListener('click', function() {
-    document.getElementById('gameOverOverlay').style.display = 'none'; // Hide the overlay
-    startGame(); // Restart the game
-});
 
 document.getElementById('submitScoreButton').addEventListener('click', function() {
     const playerName = document.getElementById('playerName').value.trim();
