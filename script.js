@@ -9,26 +9,14 @@ let raindrops = [];
 let fireworks = [];
 let game;
 
-
-
-
-document.getElementById('submitScoreButton').addEventListener('click', function() {
-    const playerName = document.getElementById('playerName').value.trim();
-    if (playerName) {
-        submitPlayerScore(playerName, score); // Implement this function according to your backend
-        document.getElementById('gameOverOverlay').style.display = 'none'; // Optionally hide the overlay
-        // Optionally reset the game or navigate to a different screen
-    } else {
-        alert("Please enter your name.");
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("startButton").addEventListener("click", startGame);
 });
 
 document.getElementById('retryButton').addEventListener('click', function() {
     this.style.display = 'none'; // Hide the retry button
     startGame(); // Restart the game
 });
-
-
 
 document.addEventListener("keydown", direction);
 
@@ -103,7 +91,7 @@ function generateFood() {
     };
 }
 
-document.getElementById("startButton").addEventListener("click", startGame);
+
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
