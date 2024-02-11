@@ -222,45 +222,36 @@ function drawFireworks() {
 }
 
 // Submitting score to the leaderboard
-function submitPlayerScore() {
-    const playerName = document.getElementById('playerName').value.trim();
-    if (!playerName) {
-        alert("Please enter your name.");
-        return;
-    }
-    const data = { name: playerName, score: score };
-    fetch('https://script.google.com/macros/s/AKfycbzLJHP3H8cvJffQEqdRI6nrtgHSo7-EacEXSySafzsM1MBx66thshcMSRLuwjowvqGlqw/exec', {
+function submitScore() {
+    const playerName = document.getElementById('playerName').value;
+    const playerScore = document.getElementById('playerScore').value;
+
+    fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec', {
         method: 'POST',
-        mode: 'no-cors',
+        mode: 'no-cors', // Note: 'no-cors' may limit the type of responses you can read
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
-    })
-    .then(() => {
-        document.getElementById('nameEntry').style.display = 'none';
-        getLeaderboard();
-    })
-    .catch(error => console.error('Error:', error));
+        body: JSON.stringify({ name: playerName, score: playerScore })
+    }).then(() => {
+        alert('Score submitted!');
+        fetchLeaderboard(); // Refresh the leaderboard after submitting
+    }).catch(error => console.error('Error:', error));
 }
 
-// Fetching and displaying the leaderboard
-function getLeaderboard() {
-    fetch('https://script.google.com/macros/s/AKfycbzLJHP3H8cvJffQEqdRI6nrtgHSo7-EacEXSySafzsM1MBx66thshcMSRLuwjowvqGlqw/exec')
-    .then(response => response.json())
-    .then(data => {
-        const leaderboardList = document.getElementById('leaderboardList');
-        leaderboardList.innerHTML = '';
-        data.forEach((entry, index) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${entry[0]}: ${entry[1]}`;
-            leaderboardList.appendChild(listItem);
-        });
-    })
-    .catch(error => console.error('Error fetching leaderboard:', error));
+function fetchLeaderboard() {
+    fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec')
+        .then(response => response.json())
+        .then(data => {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = ''; // Clear current list
+            data.forEach(entry => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.name}: ${entry.score}`;
+                leaderboardList.appendChild(li);
+            });
+        }).catch(error => console.error('Error fetching leaderboard:', error));
 }
 
-document.addEventListener('DOMContentLoaded', getLeaderboard);
-
-
-
+// Initial fetch for leaderboard
+document.addEventListener('DOMContentLoaded', fetchLeaderboard);
