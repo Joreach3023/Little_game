@@ -9,6 +9,23 @@ let raindrops = [];
 let fireworks = [];
 let game;
 
+document.getElementById('retryButton').addEventListener('click', function() {
+    document.getElementById('gameOverOverlay').style.display = 'none'; // Hide the overlay
+    startGame(); // Restart the game
+});
+
+document.getElementById('submitScoreButton').addEventListener('click', function() {
+    const playerName = document.getElementById('playerName').value.trim();
+    if (playerName) {
+        submitPlayerScore(playerName, score); // Implement this function according to your backend
+        document.getElementById('gameOverOverlay').style.display = 'none'; // Optionally hide the overlay
+        // Optionally reset the game or navigate to a different screen
+    } else {
+        alert("Please enter your name.");
+    }
+});
+
+
 document.addEventListener("keydown", direction);
 
 // Audio files
@@ -169,8 +186,9 @@ function gameOver() {
     clearInterval(game);
     bgMusic.pause();
     gameOverSound.play();
-    document.getElementById('nameEntry').style.display = 'block'; // Show input for name entry
+    document.getElementById('gameOverOverlay').style.display = 'flex'; // Show the overlay with name entry
 }
+
 
 function displayScore() {
     ctx.fillStyle = "white";
