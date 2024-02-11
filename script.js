@@ -9,6 +9,8 @@ let raindrops = [];
 let fireworks = [];
 let game;
 
+document.addEventListener("keydown", direction);
+
 // Audio files
 let eatSound = new Audio('audio/eat_sound.wav');
 let gameOverSound = new Audio('audio/game_over_sound.wav');
@@ -57,10 +59,20 @@ function startGame() {
 }
 
 function direction(event) {
-    if (event.keyCode === 37 && d !== "RIGHT") d = "LEFT";
-    else if (event.keyCode === 38 && d !== "DOWN") d = "UP";
-    else if (event.keyCode === 39 && d !== "LEFT") d = "RIGHT";
-    else if (event.keyCode === 40 && d !== "UP") d = "DOWN";
+    let key = event.keyCode;
+    if (key === 37 && d !== "RIGHT") {
+        d = "LEFT";
+        event.preventDefault(); // Prevent the default action (scroll) for this event
+    } else if (key === 38 && d !== "DOWN") {
+        d = "UP";
+        event.preventDefault();
+    } else if (key === 39 && d !== "LEFT") {
+        d = "RIGHT";
+        event.preventDefault();
+    } else if (key === 40 && d !== "UP") {
+        d = "DOWN";
+        event.preventDefault();
+    }
 }
 
 function generateFood() {
