@@ -223,21 +223,28 @@ function drawFireworks() {
 
 // Submitting score to the leaderboard
 function submitScore() {
-    const playerName = document.getElementById('playerName').value;
-    const playerScore = document.getElementById('playerScore').value;
-
-    fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec', {
-        method: 'POST',
-        mode: 'no-cors', // Note: 'no-cors' may limit the type of responses you can read
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: playerName, score: playerScore })
-    }).then(() => {
-        alert('Score submitted!');
-        fetchLeaderboard(); // Refresh the leaderboard after submitting
-    }).catch(error => console.error('Error:', error));
+    const playerName = document.getElementById('playerName').value.trim();
+    // Use the `score` variable directly instead of getting a value from an input
+    if (playerName) {
+        fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec', {
+            method: 'POST',
+            mode: 'no-cors', // Note: 'no-cors' may limit the type of responses you can read
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: playerName, score: score })
+        })
+        .then(() => {
+            alert('Score submitted!');
+            document.getElementById('playerName').value = ''; // Clear the name field
+            fetchLeaderboard(); // Refresh the leaderboard after submitting
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert("Please enter your name.");
+    }
 }
+
 
 function fetchLeaderboard() {
     fetch('https://script.google.com/macros/s/AKfycbxlZ26ix5F6RtjRrzS96iwyIbWA1GZ12TVUauQvXEWFgIeATgyjVPoY9di7c4Z4WnRyhw/exec')
