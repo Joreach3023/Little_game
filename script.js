@@ -143,7 +143,7 @@ function updateAndDrawRain() {
         drop.y += drop.speed;
         ctx.fillStyle = 'rgba(0, 0, 255, 0.5)';
         ctx.beginPath();
-        ctx.arc(drop.x, drop.y, 2, 0, Math.PI * 2);
+        ctx.arc(drop.x, drop.y, 8, 0, Math.PI * 2);
         ctx.fill();
 
         if (drop.y > canvas.height) {
