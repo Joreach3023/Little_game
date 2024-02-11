@@ -10,6 +10,8 @@ let fireworks = [];
 let game;
 
 
+
+
 document.getElementById('submitScoreButton').addEventListener('click', function() {
     const playerName = document.getElementById('playerName').value.trim();
     if (playerName) {
@@ -229,7 +231,7 @@ function drawFireworks() {
 }
 
 // Submitting score to the leaderboard
-function submitScore() {
+function submitScore(playerName, score) {
     const playerName = document.getElementById('playerName').value.trim();
     // Use the `score` variable directly instead of getting a value from an input
     if (playerName) {
