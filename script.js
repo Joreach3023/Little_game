@@ -178,13 +178,24 @@ function gameOver() {
     clearInterval(game);
     bgMusic.pause();
     gameOverSound.play();
-    const playerName = prompt("Game Over! Enter your name for the leaderboard:", "Player");
-    if (playerName) {
-        submitScore(playerName, score);
-    }
- document.getElementById('retryButton').style.display = 'block'; // Show retry button
+    document.getElementById('gameOverModal').style.display = "block";
 }
 
+// Close modal when the user clicks on <span> (x)
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('gameOverModal').style.display = "none";
+});
+
+function submitName() {
+    const playerName = document.getElementById('playerNameInput').value.trim();
+    if (playerName) {
+        submitScore(playerName, score); // Use your existing function to submit the score
+        document.getElementById('gameOverModal').style.display = "none";
+    } else {
+        alert("Please enter your name.");
+    }
+     document.getElementById('retryButton').style.display = 'block'; // Show retry button
+}
 
 
 function displayScore() {
