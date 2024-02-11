@@ -211,7 +211,7 @@ function submitPlayerScore() {
         return;
     }
     const data = { name: playerName, score: score };
-    fetch('https://script.google.com/macros/s/AKfycbzLJHP3H8cvJffQEqdRI6nrtgHSo7-EacEXSySafzsM1MBx66thshcMSRLuwjowvqGlqw/exec') {
+    fetch('https://script.google.com/macros/s/AKfycbzLJHP3H8cvJffQEqdRI6nrtgHSo7-EacEXSySafzsM1MBx66thshcMSRLuwjowvqGlqw/exec', {
         method: 'POST',
         mode: 'no-cors',
         headers: {
