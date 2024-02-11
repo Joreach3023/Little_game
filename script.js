@@ -21,6 +21,12 @@ document.getElementById('submitScoreButton').addEventListener('click', function(
     }
 });
 
+document.getElementById('retryButton').addEventListener('click', function() {
+    this.style.display = 'none'; // Hide the retry button
+    startGame(); // Restart the game
+});
+
+
 
 document.addEventListener("keydown", direction);
 
@@ -182,8 +188,13 @@ function gameOver() {
     clearInterval(game);
     bgMusic.pause();
     gameOverSound.play();
-    document.getElementById('gameOverOverlay').style.display = 'flex'; // Show the overlay with name entry
+    const playerName = prompt("Game Over! Enter your name for the leaderboard:", "Player");
+    if (playerName) {
+        submitScore(playerName, score);
+    }
+ document.getElementById('retryButton').style.display = 'block'; // Show retry button
 }
+
 
 
 function displayScore() {
